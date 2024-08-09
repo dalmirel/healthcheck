@@ -1,0 +1,12 @@
+syntax = "proto3";
+package healthcheck.healthcheck;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "healthcheck/x/healthcheck/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

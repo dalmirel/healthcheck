@@ -1,0 +1,7 @@
+syntax = "proto3";
+package healthcheck.healthcheck;
+
+option go_package = "healthcheck/x/healthcheck/types";
+
+// Msg defines the Msg service.
+service Msg {}
