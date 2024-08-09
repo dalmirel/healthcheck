@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package healthcheck.monitored;
+
+import "gogoproto/gogo.proto";
+import "healthcheck/monitored/params.proto";
+
+option go_package = "healthcheck/x/monitored/types";
+
+// GenesisState defines the monitored module's genesis state.
+message GenesisState {
+  Params params  = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
+}
+
