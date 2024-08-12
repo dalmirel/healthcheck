@@ -4,12 +4,15 @@ package healthcheck.healthcheck;
 
 import "gogoproto/gogo.proto";
 import "healthcheck/healthcheck/params.proto";
+import "healthcheck/healthcheck/chain.proto";
 
 option go_package = "healthcheck/x/healthcheck/types";
 
 // GenesisState defines the healthcheck module's genesis state.
 message GenesisState {
-  Params params  = 1 [(gogoproto.nullable) = false];
-  string port_id = 2;
+           Params params     = 1 [(gogoproto.nullable) = false];
+           string port_id    = 2;
+  repeated Chain  chainList  = 3 [(gogoproto.nullable) = false];
+           uint64 chainCount = 4;
 }
 

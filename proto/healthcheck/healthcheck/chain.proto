@@ -1,0 +1,12 @@
+syntax = "proto3";
+package healthcheck.healthcheck;
+
+option go_package = "healthcheck/x/healthcheck/types";
+
+message Chain {
+  uint64 id = 1;
+  string chainId = 2; 
+  string connectionId = 3; 
+  string status = 4; 
+  
+}

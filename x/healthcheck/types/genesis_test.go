@@ -22,9 +22,44 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 				PortId: types.PortID,
+				ChainList: []types.Chain{
+					{
+						Id: 0,
+					},
+					{
+						Id: 1,
+					},
+				},
+				ChainCount: 2,
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated chain",
+			genState: &types.GenesisState{
+				ChainList: []types.Chain{
+					{
+						Id: 0,
+					},
+					{
+						Id: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "invalid chain count",
+			genState: &types.GenesisState{
+				ChainList: []types.Chain{
+					{
+						Id: 1,
+					},
+				},
+				ChainCount: 0,
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	}
