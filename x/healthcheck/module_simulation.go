@@ -23,7 +23,11 @@ var (
 )
 
 const (
-// this line is used by starport scaffolding # simapp/module/const
+	opWeightMsgAddChain = "op_weight_msg_add_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgAddChain int = 100
+
+	// this line is used by starport scaffolding # simapp/module/const
 )
 
 // GenerateGenesisState creates a randomized GenState of the module.
@@ -52,6 +56,17 @@ func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedP
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
 	operations := make([]simtypes.WeightedOperation, 0)
 
+	var weightMsgAddChain int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddChain, &weightMsgAddChain, nil,
+		func(_ *rand.Rand) {
+			weightMsgAddChain = defaultWeightMsgAddChain
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgAddChain,
+		healthchecksimulation.SimulateMsgAddChain(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -60,6 +75,14 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 // ProposalMsgs returns msgs used for governance proposals for simulations.
 func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.WeightedProposalMsg {
 	return []simtypes.WeightedProposalMsg{
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgAddChain,
+			defaultWeightMsgAddChain,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				healthchecksimulation.SimulateMsgAddChain(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
 		// this line is used by starport scaffolding # simapp/module/OpMsg
 	}
 }

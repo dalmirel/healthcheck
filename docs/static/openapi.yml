@@ -34945,7 +34945,16 @@ paths:
                     connectionId:
                       type: string
                     status:
-                      type: string
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: uint64
+                        block:
+                          type: string
+                          format: uint64
               pagination:
                 type: object
                 properties:
@@ -35072,7 +35081,16 @@ paths:
                   connectionId:
                     type: string
                   status:
-                    type: string
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                      timestamp:
+                        type: string
+                        format: uint64
+                      block:
+                        type: string
+                        format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -70790,7 +70808,29 @@ definitions:
       connectionId:
         type: string
       status:
+        type: object
+        properties:
+          status:
+            type: string
+          timestamp:
+            type: string
+            format: uint64
+          block:
+            type: string
+            format: uint64
+  healthcheck.healthcheck.MonitoredChainStatus:
+    type: object
+    properties:
+      status:
         type: string
+      timestamp:
+        type: string
+        format: uint64
+      block:
+        type: string
+        format: uint64
+  healthcheck.healthcheck.MsgAddChainResponse:
+    type: object
   healthcheck.healthcheck.Params:
     type: object
     description: Params defines the parameters for the module.
@@ -70810,7 +70850,16 @@ definitions:
             connectionId:
               type: string
             status:
-              type: string
+              type: object
+              properties:
+                status:
+                  type: string
+                timestamp:
+                  type: string
+                  format: uint64
+                block:
+                  type: string
+                  format: uint64
       pagination:
         type: object
         properties:
@@ -70851,7 +70900,16 @@ definitions:
           connectionId:
             type: string
           status:
-            type: string
+            type: object
+            properties:
+              status:
+                type: string
+              timestamp:
+                type: string
+                format: uint64
+              block:
+                type: string
+                format: uint64
   healthcheck.healthcheck.QueryParamsResponse:
     type: object
     properties:
