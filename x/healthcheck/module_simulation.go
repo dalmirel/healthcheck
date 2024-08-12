@@ -27,6 +27,10 @@ const (
 	// TODO: Determine the simulation weight value
 	defaultWeightMsgAddChain int = 100
 
+	opWeightMsgDeleteChain = "op_weight_msg_delete_chain"
+	// TODO: Determine the simulation weight value
+	defaultWeightMsgDeleteChain int = 100
+
 	// this line is used by starport scaffolding # simapp/module/const
 )
 
@@ -67,6 +71,17 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		healthchecksimulation.SimulateMsgAddChain(am.accountKeeper, am.bankKeeper, am.keeper),
 	))
 
+	var weightMsgDeleteChain int
+	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgDeleteChain, &weightMsgDeleteChain, nil,
+		func(_ *rand.Rand) {
+			weightMsgDeleteChain = defaultWeightMsgDeleteChain
+		},
+	)
+	operations = append(operations, simulation.NewWeightedOperation(
+		weightMsgDeleteChain,
+		healthchecksimulation.SimulateMsgDeleteChain(am.accountKeeper, am.bankKeeper, am.keeper),
+	))
+
 	// this line is used by starport scaffolding # simapp/module/operation
 
 	return operations
@@ -80,6 +95,14 @@ func (am AppModule) ProposalMsgs(simState module.SimulationState) []simtypes.Wei
 			defaultWeightMsgAddChain,
 			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
 				healthchecksimulation.SimulateMsgAddChain(am.accountKeeper, am.bankKeeper, am.keeper)
+				return nil
+			},
+		),
+		simulation.NewWeightedProposalMsg(
+			opWeightMsgDeleteChain,
+			defaultWeightMsgDeleteChain,
+			func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) sdk.Msg {
+				healthchecksimulation.SimulateMsgDeleteChain(am.accountKeeper, am.bankKeeper, am.keeper)
 				return nil
 			},
 		),

@@ -6,7 +6,8 @@ option go_package = "healthcheck/x/healthcheck/types";
 
 // Msg defines the Msg service.
 service Msg {
-  rpc AddChain (MsgAddChain) returns (MsgAddChainResponse);
+  rpc AddChain    (MsgAddChain   ) returns (MsgAddChainResponse   );
+  rpc DeleteChain (MsgDeleteChain) returns (MsgDeleteChainResponse);
 }
 message MsgAddChain {
   string creator      = 1;
@@ -15,4 +16,11 @@ message MsgAddChain {
 }
 
 message MsgAddChainResponse {}
+
+message MsgDeleteChain {
+  string creator = 1;
+  string chainId = 2;
+}
+
+message MsgDeleteChainResponse {}
 
