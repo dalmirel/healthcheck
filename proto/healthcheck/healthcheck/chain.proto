@@ -7,6 +7,6 @@ message Chain {
   uint64 id = 1;
   string chainId = 2; 
   string connectionId = 3; 
-  string status = 4; 
+  MonitoredChainStatus status = 4; 
   
 }

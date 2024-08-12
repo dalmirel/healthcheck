@@ -1,0 +1,11 @@
+syntax = "proto3";
+package healthcheck.healthcheck;
+
+option go_package = "healthcheck/x/healthcheck/types";
+
+message MonitoredChainStatus {
+  
+  string status = 1; 
+  uint64 timestamp = 2; 
+  uint64 block = 3; 
+}
