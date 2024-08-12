@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/binary"
 	"fmt"
 
 	"github.com/cometbft/cometbft/libs/log"
@@ -109,4 +110,31 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) GetRegistryChainChannelID(ctx sdk.Context) string {
+	store := ctx.KVStore(k.storeKey)
+	return string(store.Get(types.RegistryChainChannelIDKey))
+}
+
+func (k Keeper) SetRegistryChainChannelID(ctx sdk.Context, channelID string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.RegistryChainChannelIDKey, []byte(channelID))
+}
+
+func (k Keeper) GetLastHealthcheckUpdateHeight(ctx sdk.Context) uint64 {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.LastHealthcheckUpdateHeightKey)
+	if bz == nil {
+		return 0
+	}
+
+	return binary.BigEndian.Uint64(bz)
+}
+
+func (k Keeper) SetLastHealthcheckUpdateHeight(ctx sdk.Context, height uint64) {
+	store := ctx.KVStore(k.storeKey)
+	bz := make([]byte, 8)
+	binary.BigEndian.PutUint64(bz, height)
+	store.Set(types.LastHealthcheckUpdateHeightKey, bz)
 }

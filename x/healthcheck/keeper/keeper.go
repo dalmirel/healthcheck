@@ -15,6 +15,10 @@ import (
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	"healthcheck/x/healthcheck/types"
+
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	connectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
+	ibctmtypes "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 )
 
 type (
@@ -24,9 +28,11 @@ type (
 		memKey     storetypes.StoreKey
 		paramstore paramtypes.Subspace
 
-		channelKeeper types.ChannelKeeper
-		portKeeper    types.PortKeeper
-		scopedKeeper  exported.ScopedKeeper
+		channelKeeper    types.ChannelKeeper
+		portKeeper       types.PortKeeper
+		connectionKeeper types.ConnectionKeeper
+		clientKeeper     types.ClientKeeper
+		scopedKeeper     exported.ScopedKeeper
 	}
 )
 
@@ -37,6 +43,8 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	channelKeeper types.ChannelKeeper,
 	portKeeper types.PortKeeper,
+	connectionKeeper types.ConnectionKeeper,
+	clientKeeper types.ClientKeeper,
 	scopedKeeper exported.ScopedKeeper,
 
 ) *Keeper {
@@ -51,9 +59,11 @@ func NewKeeper(
 		memKey:     memKey,
 		paramstore: ps,
 
-		channelKeeper: channelKeeper,
-		portKeeper:    portKeeper,
-		scopedKeeper:  scopedKeeper,
+		channelKeeper:    channelKeeper,
+		portKeeper:       portKeeper,
+		connectionKeeper: connectionKeeper,
+		clientKeeper:     clientKeeper,
+		scopedKeeper:     scopedKeeper,
 	}
 }
 
@@ -109,4 +119,35 @@ func (k Keeper) ClaimCapability(ctx sdk.Context, cap *capabilitytypes.Capability
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// new function to retreive connected chain!
+func (k Keeper) GetCounterpartyChainID(ctx sdk.Context, portID, channelID string) (string, error) {
+	// see how we can retreive this data!
+	return "", nil
+}
+
+// TODO Mirel ?: Not sure this is ok, trying to read chainId from connectionID, over light client?
+func (k Keeper) GetCounterpartyChainIDFromConnection(ctx sdk.Context, connectionID string) (string, error) {
+	connection, found := k.connectionKeeper.GetConnection(ctx, connectionID)
+	if !found {
+		return "", sdkerrors.Wrapf(connectiontypes.ErrConnectionNotFound, "connection-id: %s", connectionID)
+	}
+
+	clientState, found := k.clientKeeper.GetClientState(ctx, connection.ClientId)
+	if !found {
+		return "", sdkerrors.Wrapf(clienttypes.ErrClientNotFound, "client-id: %s", connection.ClientId)
+	}
+
+	tendermintClient, ok := clientState.(*ibctmtypes.ClientState)
+	if !ok {
+		return "", sdkerrors.Wrapf(
+			clienttypes.ErrInvalidClientType,
+			"invalid client type. expected: %s, got %s",
+			exported.Tendermint,
+			clientState.ClientType(),
+		)
+	}
+
+	return tendermintClient.ChainId, nil
 }

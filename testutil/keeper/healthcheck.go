@@ -18,7 +18,10 @@ import (
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	typesparams "github.com/cosmos/cosmos-sdk/x/params/types"
 	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
+	connectiontypes "github.com/cosmos/ibc-go/v7/modules/core/03-connection/types"
 	channeltypes "github.com/cosmos/ibc-go/v7/modules/core/04-channel/types"
+	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
+	tendermintClient "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 	"github.com/stretchr/testify/require"
 )
 
@@ -56,6 +59,18 @@ func (healthcheckPortKeeper) BindPort(ctx sdk.Context, portID string) *capabilit
 	return &capabilitytypes.Capability{}
 }
 
+type healthcheckClientKeeper struct{}
+
+func (healthcheckClientKeeper) GetClientState(ctx sdk.Context, clientID string) (ibcexported.ClientState, bool) {
+	return &tendermintClient.ClientState{}, true
+}
+
+type healthcheckConnectionKeeper struct{}
+
+func (healthcheckConnectionKeeper) GetConnection(ctx sdk.Context, connectionID string) (connectiontypes.ConnectionEnd, bool) {
+	return connectiontypes.ConnectionEnd{}, true
+}
+
 func HealthcheckKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	logger := log.NewNopLogger()
 
@@ -85,6 +100,8 @@ func HealthcheckKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		paramsSubspace,
 		healthcheckChannelKeeper{},
 		healthcheckPortKeeper{},
+		healthcheckConnectionKeeper{},
+		healthcheckClientKeeper{},
 		capabilityKeeper.ScopeToModule("HealthcheckScopedKeeper"),
 	)
 

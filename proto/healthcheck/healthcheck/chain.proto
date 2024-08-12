@@ -4,10 +4,9 @@ package healthcheck.healthcheck;
 option go_package = "healthcheck/x/healthcheck/types";
 
 message Chain {
-  uint64 id = 1;
-  string chainId = 2; 
-  string connectionId = 3; 
-  MonitoredChainStatus status = 4; 
+  string chainId = 1; 
+  string connectionId = 2; 
+  MonitoredChainStatus status = 3; 
   
 }
 

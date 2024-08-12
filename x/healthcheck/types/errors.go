@@ -8,8 +8,9 @@ import (
 
 // x/healthcheck module sentinel errors
 var (
-	ErrSample               = sdkerrors.Register(ModuleName, 1100, "sample error")
-	ErrInvalidPacketTimeout = sdkerrors.Register(ModuleName, 1500, "invalid packet timeout")
-	ErrInvalidVersion       = sdkerrors.Register(ModuleName, 1501, "invalid version")
-	ErrInvalidHandshakeFlow = sdkerrors.Register(ModuleName, 1502, "invalid handshake flow initialization")
+	ErrSample                     = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrInvalidPacketTimeout       = sdkerrors.Register(ModuleName, 1500, "invalid packet timeout")
+	ErrInvalidVersion             = sdkerrors.Register(ModuleName, 1501, "invalid version")
+	ErrInvalidHandshakeFlow       = sdkerrors.Register(ModuleName, 1502, "invalid handshake flow initialization")
+	ErrInvalidNumOfConnectionHops = sdkerrors.Register(ModuleName, 1503, "invalid num of hops")
 )

@@ -27,7 +27,7 @@ func NewIBCModule(k keeper.Keeper) IBCModule {
 }
 
 // OnChanOpenInit implements the IBCModule interface
-// Health check / registry chain should not initialize handshake!
+// Health check / registry chain should not initialize handshake! Return error.
 func (im IBCModule) OnChanOpenInit(
 	ctx sdk.Context,
 	order channeltypes.Order,
@@ -43,7 +43,8 @@ func (im IBCModule) OnChanOpenInit(
 }
 
 // OnChanOpenTry implements the IBCModule interface
-// Since monitored chain is initializing the handshake -  health check / registry chain should  try to answer the init
+// Since monitored chain is initializing the handshake
+// health check / registry chain should try to answer the init
 func (im IBCModule) OnChanOpenTry(
 	ctx sdk.Context,
 	order channeltypes.Order,
@@ -69,7 +70,7 @@ func (im IBCModule) OnChanOpenTry(
 		return "", sdkerrors.Wrapf(porttypes.ErrInvalidPort, "invalid port: %s, expected %s", portID, commonTypes.MonitoredPortID)
 	}
 
-	// TODO Mirel - this is not needed, since the Init does not initiate handshake:
+	// TODO Mirel?  - this is not needed, since the Init does not initiate handshake:
 	// Module may have already claimed capability in OnChanOpenInit in the case of crossing hellos
 	// (ie chainA and chainB both call ChanOpenInit before one of them calls ChanOpenTry)
 	// If module can already authenticate the capability then module already owns it so we don't need to claim
@@ -82,11 +83,36 @@ func (im IBCModule) OnChanOpenTry(
 	}
 	//}
 
+	// initiate monitoring for chain - if not registered yet:
+	// 1. check connection hops?
+	if len(connectionHops) != 1 {
+		return "", sdkerrors.Wrapf(types.ErrInvalidNumOfConnectionHops, "only 1 hop expected")
+	}
+	// 2. check if chain is already monitored - skip registration then
+	chainId, err := im.keeper.GetCounterpartyChainIDFromConnection(ctx, connectionHops[0])
+	if err != nil {
+		return "", err
+	}
+
+	//monitoredChain, found := im.keeper.GetChain(ctx, chainId)
+	//if !found {
+	//	return "", sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
+	//}
+
+	//registeredChain, found = im.keeper.GetChain(ctx, chainId)
+	//if !found {
+
+	//}
+
+	// TODO SET CHAIN as being monitored
+	//im.keeper.SetChain(monitoredChain)
+
 	// return types.Version, nil // where version is healthcheck-1
 	return commonTypes.Version, nil
 }
 
 // OnChanOpenAck implements the IBCModule interface
+// MONITORED CHAIN
 func (im IBCModule) OnChanOpenAck(
 	ctx sdk.Context,
 	portID,
@@ -94,18 +120,31 @@ func (im IBCModule) OnChanOpenAck(
 	_,
 	counterpartyVersion string,
 ) error {
-	if counterpartyVersion != commonTypes.Version {
-		return sdkerrors.Wrapf(types.ErrInvalidVersion, "invalid counterparty version: %s, expected %s", counterpartyVersion, commonTypes.Version)
-	}
-	return nil
+	return sdkerrors.Wrap(types.ErrInvalidHandshakeFlow, "handshake should be initiated by monitored chain!")
+
 }
 
 // OnChanOpenConfirm implements the IBCModule interface
+// HEALTH-CHECK/REGISTRY chain step: add chain to list of monitored chains!
 func (im IBCModule) OnChanOpenConfirm(
 	ctx sdk.Context,
 	portID,
 	channelID string,
 ) error {
+	// TODO Mirel:
+	//monitoredChainID, err := im.keeper.GetCounterpartyChainIDFromChannel(ctx, portID, channelID)
+	//if err != nil {
+	//	return err
+	//}
+
+	//monitoredChain, found := im.keeper.GetChain(ctx, monitoredChainID)
+	//if !found {
+	//	return sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
+	//}
+
+	//monitoredChain.ChannelId = channelID
+	//im.keeper.SetChain(ctx, monitoredChain)
+
 	return nil
 }
 

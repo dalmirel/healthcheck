@@ -116,6 +116,7 @@ import (
 	monitoredmodule "healthcheck/x/monitored"
 	monitoredmodulekeeper "healthcheck/x/monitored/keeper"
 	monitoredmoduletypes "healthcheck/x/monitored/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "healthcheck/app/params"
@@ -536,6 +537,8 @@ func New(
 		app.GetSubspace(healthcheckmoduletypes.ModuleName),
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
+		app.IBCKeeper.ConnectionKeeper,
+		app.IBCKeeper.ClientKeeper,
 		scopedHealthcheckKeeper,
 	)
 	healthcheckModule := healthcheckmodule.NewAppModule(appCodec, app.HealthcheckKeeper, app.AccountKeeper, app.BankKeeper)
