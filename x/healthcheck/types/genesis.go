@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+	commonTypes "healthcheck/x/common"
+
 	host "github.com/cosmos/ibc-go/v7/modules/core/24-host"
 )
 
@@ -11,7 +13,7 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		PortId:    PortID,
+		PortId:    commonTypes.HealthcheckPortID,
 		ChainList: []Chain{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),

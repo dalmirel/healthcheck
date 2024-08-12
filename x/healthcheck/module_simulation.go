@@ -3,14 +3,17 @@ package healthcheck
 import (
 	"math/rand"
 
+	"healthcheck/testutil/sample"
+	healthchecksimulation "healthcheck/x/healthcheck/simulation"
+	"healthcheck/x/healthcheck/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"healthcheck/testutil/sample"
-	healthchecksimulation "healthcheck/x/healthcheck/simulation"
-	"healthcheck/x/healthcheck/types"
+
+	commonTypes "healthcheck/x/common"
 )
 
 // avoid unused import issue
@@ -42,7 +45,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	healthcheckGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
-		PortId: types.PortID,
+		PortId: commonTypes.HealthcheckPortID,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&healthcheckGenesis)

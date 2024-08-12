@@ -3,8 +3,10 @@ package types_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	commonTypes "healthcheck/x/common"
 	"healthcheck/x/healthcheck/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesisState_Validate(t *testing.T) {
@@ -21,7 +23,7 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
-				PortId: types.PortID,
+				PortId: commonTypes.HealthcheckPortID,
 				ChainList: []types.Chain{
 					{
 						Id: 0,

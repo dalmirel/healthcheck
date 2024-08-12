@@ -13,11 +13,13 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_monitored"
 
+	// TODO Mirel: Moved to the commonTypes - version 1, portID: healthcheck;monitored:
+
 	// Version defines the current version the IBC module supports
-	Version = "monitored-1"
+	// Version = "monitored-1"
 
 	// PortID is the default port id that module binds to
-	PortID = "monitored"
+	// PortID = "monitored"
 )
 
 var (

@@ -3,17 +3,19 @@ package monitored_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	keepertest "healthcheck/testutil/keeper"
 	"healthcheck/testutil/nullify"
+	commonTypes "healthcheck/x/common"
 	"healthcheck/x/monitored"
 	"healthcheck/x/monitored/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-		PortId: types.PortID,
+		PortId: commonTypes.MonitoredPortID,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 

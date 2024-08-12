@@ -1,5 +1,5 @@
 syntax = "proto3";
-package healthcheck.healthcheck;
+package healthcheck.common;
 
 option go_package = "healthcheck/x/common";
 

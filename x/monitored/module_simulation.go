@@ -3,14 +3,16 @@ package monitored
 import (
 	"math/rand"
 
+	"healthcheck/testutil/sample"
+	commonTypes "healthcheck/x/common"
+	monitoredsimulation "healthcheck/x/monitored/simulation"
+	"healthcheck/x/monitored/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
-	"healthcheck/testutil/sample"
-	monitoredsimulation "healthcheck/x/monitored/simulation"
-	"healthcheck/x/monitored/types"
 )
 
 // avoid unused import issue
@@ -34,7 +36,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	}
 	monitoredGenesis := types.GenesisState{
 		Params: types.DefaultParams(),
-		PortId: types.PortID,
+		PortId: commonTypes.MonitoredPortID,
 		// this line is used by starport scaffolding # simapp/module/genesisState
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&monitoredGenesis)

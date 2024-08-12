@@ -3,17 +3,19 @@ package healthcheck_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/require"
 	keepertest "healthcheck/testutil/keeper"
 	"healthcheck/testutil/nullify"
+	commonTypes "healthcheck/x/common"
 	"healthcheck/x/healthcheck"
 	"healthcheck/x/healthcheck/types"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-		PortId: types.PortID,
+		PortId: commonTypes.HealthcheckPortID,
 		ChainList: []types.Chain{
 			{
 				Id: 0,

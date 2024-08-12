@@ -13,6 +13,7 @@ import (
 
 	"healthcheck/testutil/network"
 	"healthcheck/testutil/nullify"
+	commonTypes "healthcheck/x/common"
 	"healthcheck/x/healthcheck/client/cli"
 	"healthcheck/x/healthcheck/types"
 )
@@ -20,7 +21,7 @@ import (
 func networkWithChainObjects(t *testing.T, n int) (*network.Network, []types.Chain) {
 	t.Helper()
 	cfg := network.DefaultConfig()
-	state := types.GenesisState{PortId: types.PortID}
+	state := types.GenesisState{PortId: commonTypes.HealthcheckPortID}
 	for i := 0; i < n; i++ {
 		chain := types.Chain{
 			Id: uint64(i),
