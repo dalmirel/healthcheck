@@ -26,10 +26,10 @@ func TestGenesisState_Validate(t *testing.T) {
 				PortId: commonTypes.HealthcheckPortID,
 				ChainList: []types.Chain{
 					{
-						Id: 0,
+						ChainId: "0",
 					},
 					{
-						Id: 1,
+						ChainId: "1",
 					},
 				},
 				ChainCount: 2,
@@ -42,24 +42,12 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				ChainList: []types.Chain{
 					{
-						Id: 0,
+						ChainId: "0",
 					},
 					{
-						Id: 0,
+						ChainId: "0",
 					},
 				},
-			},
-			valid: false,
-		},
-		{
-			desc: "invalid chain count",
-			genState: &types.GenesisState{
-				ChainList: []types.Chain{
-					{
-						Id: 1,
-					},
-				},
-				ChainCount: 0,
 			},
 			valid: false,
 		},

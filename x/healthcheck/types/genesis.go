@@ -26,17 +26,15 @@ func (gs GenesisState) Validate() error {
 	if err := host.PortIdentifierValidator(gs.PortId); err != nil {
 		return err
 	}
-	// Check for duplicated ID in chain
-	chainIdMap := make(map[uint64]bool)
-	chainCount := gs.GetChainCount()
+	// Check for duplicated index in chain
+	chainIndexMap := make(map[string]struct{})
+
 	for _, elem := range gs.ChainList {
-		if _, ok := chainIdMap[elem.Id]; ok {
-			return fmt.Errorf("duplicated id for chain")
+		index := string(ChainKey(elem.ChainId))
+		if _, ok := chainIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for chain")
 		}
-		if elem.Id >= chainCount {
-			return fmt.Errorf("chain id should be lower or equal than the last id")
-		}
-		chainIdMap[elem.Id] = true
+		chainIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

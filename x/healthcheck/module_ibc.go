@@ -94,18 +94,13 @@ func (im IBCModule) OnChanOpenTry(
 		return "", err
 	}
 
-	//monitoredChain, found := im.keeper.GetChain(ctx, chainId)
-	//if !found {
-	//	return "", sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
-	//}
+	monitoredChain, found := im.keeper.GetChain(ctx, chainId)
+	if !found {
+		return "", sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChain.GetChainId())
+	}
 
-	//registeredChain, found = im.keeper.GetChain(ctx, chainId)
-	//if !found {
-
-	//}
-
-	// TODO SET CHAIN as being monitored
-	//im.keeper.SetChain(monitoredChain)
+	// TODO Mirel? SET CHAIN as being monitored
+	im.keeper.SetChain(ctx, monitoredChain)
 
 	// return types.Version, nil // where version is healthcheck-1
 	return commonTypes.Version, nil

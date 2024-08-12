@@ -13,4 +13,5 @@ var (
 	ErrInvalidVersion             = sdkerrors.Register(ModuleName, 1501, "invalid version")
 	ErrInvalidHandshakeFlow       = sdkerrors.Register(ModuleName, 1502, "invalid handshake flow initialization")
 	ErrInvalidNumOfConnectionHops = sdkerrors.Register(ModuleName, 1503, "invalid num of hops")
+	ErrChainNotRegistered         = sdkerrors.Register(ModuleName, 1504, "chain not registered for monitoring")
 )
