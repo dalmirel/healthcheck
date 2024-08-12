@@ -39,7 +39,7 @@ func (im IBCModule) OnChanOpenInit(
 	version string,
 ) (string, error) {
 
-	return version, sdkerrors.Wrap(types.ErrInvalidHandshakeInit, "handshake should be initiated by monitored chain!")
+	return version, sdkerrors.Wrap(types.ErrInvalidHandshakeFlow, "handshake should be initiated by monitored chain!")
 }
 
 // OnChanOpenTry implements the IBCModule interface
