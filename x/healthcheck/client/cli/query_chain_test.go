@@ -2,6 +2,7 @@ package cli_test
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	tmcli "github.com/cometbft/cometbft/libs/cli"
@@ -24,7 +25,7 @@ func networkWithChainObjects(t *testing.T, n int) (*network.Network, []types.Cha
 	state := types.GenesisState{PortId: commonTypes.HealthcheckPortID}
 	for i := 0; i < n; i++ {
 		chain := types.Chain{
-			Id: uint64(i),
+			ChainId: strconv.Itoa(i),
 		}
 		nullify.Fill(&chain)
 		state.ChainList = append(state.ChainList, chain)
@@ -51,7 +52,7 @@ func TestShowChain(t *testing.T) {
 	}{
 		{
 			desc: "found",
-			id:   fmt.Sprintf("%d", objs[0].Id),
+			id:   fmt.Sprintf("%d", objs[0].ChainId),
 			args: common,
 			obj:  objs[0],
 		},

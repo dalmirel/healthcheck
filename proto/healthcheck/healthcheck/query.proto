@@ -21,7 +21,7 @@ service Query {
   
   // Queries a list of Chain items.
   rpc Chain    (QueryGetChainRequest) returns (QueryGetChainResponse) {
-    option (google.api.http).get = "/healthcheck/healthcheck/chain/{id}";
+    option (google.api.http).get = "/healthcheck/healthcheck/chain/{chainId}";
   
   }
   rpc ChainAll (QueryAllChainRequest) returns (QueryAllChainResponse) {
@@ -40,7 +40,7 @@ message QueryParamsResponse {
 }
 
 message QueryGetChainRequest {
-  uint64 id = 1;
+  string chainId = 1;
 }
 
 message QueryGetChainResponse {

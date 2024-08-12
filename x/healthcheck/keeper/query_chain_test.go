@@ -1,10 +1,10 @@
 package keeper_test
 
 import (
+	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
@@ -19,33 +19,38 @@ func TestChainQuerySingle(t *testing.T) {
 	keeper, ctx := keepertest.HealthcheckKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNChain(keeper, ctx, 2)
-	tests := []struct {
+	for _, tc := range []struct {
 		desc     string
 		request  *types.QueryGetChainRequest
 		response *types.QueryGetChainResponse
 		err      error
 	}{
 		{
-			desc:     "First",
-			request:  &types.QueryGetChainRequest{Id: msgs[0].Id},
+			desc: "First",
+			request: &types.QueryGetChainRequest{
+				ChainId: msgs[0].ChainId,
+			},
 			response: &types.QueryGetChainResponse{Chain: msgs[0]},
 		},
 		{
-			desc:     "Second",
-			request:  &types.QueryGetChainRequest{Id: msgs[1].Id},
+			desc: "Second",
+			request: &types.QueryGetChainRequest{
+				ChainId: msgs[1].ChainId,
+			},
 			response: &types.QueryGetChainResponse{Chain: msgs[1]},
 		},
 		{
-			desc:    "KeyNotFound",
-			request: &types.QueryGetChainRequest{Id: uint64(len(msgs))},
-			err:     sdkerrors.ErrKeyNotFound,
+			desc: "KeyNotFound",
+			request: &types.QueryGetChainRequest{
+				ChainId: strconv.Itoa(100000),
+			},
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",
 			err:  status.Error(codes.InvalidArgument, "invalid request"),
 		},
-	}
-	for _, tc := range tests {
+	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			response, err := keeper.Chain(wctx, tc.request)
 			if tc.err != nil {

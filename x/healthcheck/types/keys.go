@@ -31,7 +31,4 @@ func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
 
-const (
-	ChainKey      = "Chain/value/"
-	ChainCountKey = "Chain/count/"
-)
+const ()

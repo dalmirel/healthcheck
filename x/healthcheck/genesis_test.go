@@ -18,10 +18,10 @@ func TestGenesis(t *testing.T) {
 		PortId: commonTypes.HealthcheckPortID,
 		ChainList: []types.Chain{
 			{
-				Id: 0,
+				ChainId: "0",
 			},
 			{
-				Id: 1,
+				ChainId: "1",
 			},
 		},
 		ChainCount: 2,
