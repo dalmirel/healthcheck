@@ -52,6 +52,10 @@ func (healthcheckChannelKeeper) ChanCloseInit(ctx sdk.Context, portID, channelID
 	return nil
 }
 
+func (healthcheckChannelKeeper) GetChannelClientState(ctx sdk.Context, portID, channelID string) (string, ibcexported.ClientState, error) {
+	return "", nil, nil
+}
+
 // healthcheckportKeeper is a stub of cosmosibckeeper.PortKeeper
 type healthcheckPortKeeper struct{}
 

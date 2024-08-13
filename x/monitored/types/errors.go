@@ -12,5 +12,5 @@ var (
 	ErrInvalidPacketTimeout = sdkerrors.Register(ModuleName, 1500, "invalid packet timeout")
 	ErrInvalidVersion       = sdkerrors.Register(ModuleName, 1501, "invalid version")
 	ErrInvalidHandshakeFlow = sdkerrors.Register(ModuleName, 1502, "invalid handshake flow initialization")
-	ErrUnexpectedChannelID  = sdkerrors.Register(ModuleName, 1504, "unexpected channel ID")
+	ErrUnexpectedChannelID  = sdkerrors.Register(ModuleName, 1503, "unexpected channel ID")
 )
