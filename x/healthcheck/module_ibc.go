@@ -136,6 +136,7 @@ func (im IBCModule) OnChanOpenConfirm(
 		return sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
 	}
 
+	// TODO Mirel? : I think I should probably store channel Id here, since this is the last step of the handshake?
 	im.keeper.SetChain(ctx, monitoredChain)
 
 	return nil
@@ -168,6 +169,7 @@ func (im IBCModule) OnRecvPacket(
 	modulePacket channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
+	//TODO Mirel?: what should we set as result of the acknowledgment
 	var ack channeltypes.Acknowledgement
 
 	// this line is used by starport scaffolding # oracle/packet/module/recv
@@ -177,8 +179,35 @@ func (im IBCModule) OnRecvPacket(
 		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal packet data: %s", err.Error()))
 	}
 
+	// packet is received, we need to check from which chain - it contains heart beat update
+	// TODO Mirel: should this be source or destination?
+	chainId, err := im.keeper.GetCounterpartyChainIDFromChannel(ctx, modulePacket.DestinationPort, modulePacket.DestinationChannel)
+	if err != nil {
+		return channeltypes.NewErrorAcknowledgement(err)
+	}
+
+	monitoredChain, found := im.keeper.GetChain(ctx, chainId)
+	if !found {
+		return channeltypes.NewErrorAcknowledgement(sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", chainId))
+	}
+
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
+	case *commonTypes.HealthcheckPacketData_HealthCheckUpdate:
+		if monitoredChain.Status.Timestamp >= packet.HealthCheckUpdate.Timestamp ||
+			monitoredChain.Status.Block >= packet.HealthCheckUpdate.Block {
+
+			err := fmt.Errorf("old heart beat update has already been received for chain with chain ID %s", monitoredChain.ChainId)
+			return channeltypes.NewErrorAcknowledgement(err)
+		}
+
+		// if this is newer heart beat IBC update:
+		monitoredChain.Status.Block = packet.HealthCheckUpdate.Block
+		monitoredChain.Status.Timestamp = packet.HealthCheckUpdate.Timestamp
+		// TODO Mirel: define active/inactive statuses
+
+		im.keeper.SetChain(ctx, monitoredChain)
+
 	// this line is used by starport scaffolding # ibc/packet/module/recv
 	default:
 		err := fmt.Errorf("unrecognized %s packet type: %T", types.ModuleName, packet)

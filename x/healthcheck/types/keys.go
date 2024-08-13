@@ -20,6 +20,8 @@ const (
 
 	// PortID is the default port id that module binds to
 	// PortID = "healthcheck"
+
+	DefaultTimeoutInterval = 20
 )
 
 var (
@@ -31,4 +33,9 @@ func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
 
-const ()
+type chainActivityStatus = uint64
+
+const (
+	Inactive chainActivityStatus = iota
+	Active
+)

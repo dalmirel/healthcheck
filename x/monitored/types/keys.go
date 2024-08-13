@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "monitored"
@@ -20,6 +22,14 @@ const (
 
 	// PortID is the default port id that module binds to
 	// PortID = "monitored"
+
+	// hard coded heart beat interval values:
+	UpdateInterval = 10
+
+	TimeoutInterval = 20
+
+	// default timeout periood for ibc packets
+	TimeoutPeriod = 7 * 24 * time.Hour
 )
 
 var (

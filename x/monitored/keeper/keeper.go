@@ -3,6 +3,7 @@ package keeper
 import (
 	"encoding/binary"
 	"fmt"
+	"time"
 
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -16,6 +17,8 @@ import (
 	"github.com/cosmos/ibc-go/v7/modules/core/exported"
 
 	"healthcheck/x/monitored/types"
+
+	clienttypes "github.com/cosmos/ibc-go/v7/modules/core/02-client/types"
 )
 
 type (
@@ -132,9 +135,43 @@ func (k Keeper) GetLastHealthcheckUpdateHeight(ctx sdk.Context) uint64 {
 	return binary.BigEndian.Uint64(bz)
 }
 
+// If the sending out IBC packet was with no errors, save the last block height update
 func (k Keeper) SetLastHealthcheckUpdateHeight(ctx sdk.Context, height uint64) {
 	store := ctx.KVStore(k.storeKey)
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, height)
 	store.Set(types.LastHealthcheckUpdateHeightKey, bz)
+}
+
+func (k Keeper) IsChannelOpen(ctx sdk.Context, channelID string) bool {
+	channel, found := k.channelKeeper.GetChannel(ctx, k.GetPort(ctx), channelID)
+	if !found {
+		return false
+	}
+
+	return channel.State == channeltypes.OPEN
+}
+
+func (k Keeper) SendHeartBeatUpdatePacket(
+	ctx sdk.Context,
+	portID string,
+	channelID string,
+	timeoutPeriod time.Duration,
+	packetData []byte) error {
+	capName := host.ChannelCapabilityPath(portID, channelID)
+	chanCap, found := k.scopedKeeper.GetCapability(ctx, capName)
+	if !found {
+		return sdkerrors.Wrapf(channeltypes.ErrChannelCapabilityNotFound, "could not retrieve channel capability at: %s", capName)
+	}
+
+	_, err := k.channelKeeper.SendPacket(
+		ctx,
+		chanCap,
+		portID,
+		channelID,
+		clienttypes.Height{},
+		uint64(ctx.BlockTime().Add(timeoutPeriod).UnixNano()),
+		packetData)
+
+	return err
 }

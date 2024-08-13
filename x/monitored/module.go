@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	// this line is used by starport scaffolding # 1
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -11,15 +12,17 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
+	commonTypes "healthcheck/x/common"
+	"healthcheck/x/monitored/client/cli"
+	"healthcheck/x/monitored/keeper"
+	"healthcheck/x/monitored/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
-	"healthcheck/x/monitored/client/cli"
-	"healthcheck/x/monitored/keeper"
-	"healthcheck/x/monitored/types"
 )
 
 var (
@@ -145,6 +148,49 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
-func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	// heart beat is sent to the health check chain
+	SendHeartBeat(ctx, am.keeper)
+
 	return []abci.ValidatorUpdate{}
+}
+
+func SendHeartBeat(ctx sdk.Context, keeper keeper.Keeper) {
+
+	// if the chanelId is not OPEN yet or was closed - > do not sent the heart beat!
+	channelID := keeper.GetRegistryChainChannelID(ctx)
+	if channelID == "" || !keeper.IsChannelOpen(ctx, channelID) {
+		return
+	}
+
+	// TODO Mirel: think of trade off: update interval in blocks or in time?
+	lastUpdateHeight := int64(keeper.GetLastHealthcheckUpdateHeight(ctx))
+	currentHeight := ctx.BlockHeight()
+
+	if currentHeight-lastUpdateHeight < types.UpdateInterval {
+		return
+	}
+
+	packet := commonTypes.HealthcheckPacketData{
+		Packet: &commonTypes.HealthcheckPacketData_HealthCheckUpdate{
+			HealthCheckUpdate: &commonTypes.HealthCheckData{
+				Block:     uint64(currentHeight),
+				Timestamp: uint64(ctx.BlockTime().UnixNano()),
+			},
+		},
+	}
+
+	packetData, err := packet.Marshal()
+	if err != nil {
+		keeper.Logger(ctx).Debug("failed to marshal healthcheck update IBC packet")
+		return
+	}
+
+	err = keeper.SendHeartBeatUpdatePacket(ctx, keeper.GetPort(ctx), channelID, types.TimeoutPeriod, packetData)
+	if err != nil {
+		keeper.Logger(ctx).Debug("failed to send heart beat update IBC packet to healthcheck chain")
+		return
+	}
+
+	keeper.SetLastHealthcheckUpdateHeight(ctx, uint64(currentHeight))
 }
