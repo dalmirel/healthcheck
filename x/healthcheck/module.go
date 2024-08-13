@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	// this line is used by starport scaffolding # 1
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -11,15 +12,16 @@ import (
 
 	abci "github.com/cometbft/cometbft/abci/types"
 
+	"healthcheck/x/healthcheck/client/cli"
+	"healthcheck/x/healthcheck/keeper"
+	"healthcheck/x/healthcheck/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	porttypes "github.com/cosmos/ibc-go/v7/modules/core/05-port/types"
-	"healthcheck/x/healthcheck/client/cli"
-	"healthcheck/x/healthcheck/keeper"
-	"healthcheck/x/healthcheck/types"
 )
 
 var (
@@ -146,5 +148,13 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+
+	// TODO Mirel:
+	// update acticity info for registered and monitered chains
+	// function should check each registered chain for the tiestamp
+	// if the timestamp is older than timeout interval -> set chain to inactive status
+	// if not, leave it in active state
+
+	// if chain is in inactive state, the channel should be closed!
 	return []abci.ValidatorUpdate{}
 }
