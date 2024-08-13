@@ -151,3 +151,17 @@ func (k Keeper) GetCounterpartyChainIDFromConnection(ctx sdk.Context, connection
 
 	return tendermintClient.ChainId, nil
 }
+
+func (k Keeper) GetCounterpartyChainIDFromChannel(ctx sdk.Context, portID, channelID string) (string, error) {
+	_, clientState, err := k.channelKeeper.GetChannelClientState(ctx, portID, channelID)
+	if err != nil {
+		return "", err
+	}
+
+	tendermintClient, ok := clientState.(*ibctmtypes.ClientState)
+	if !ok {
+		return "", sdkerrors.Wrapf(clienttypes.ErrInvalidClientType, "invalid client type. expected: %s, got %s", exported.Tendermint, clientState.ClientType())
+	}
+
+	return tendermintClient.ChainId, nil
+}

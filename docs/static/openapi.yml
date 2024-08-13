@@ -34937,9 +34937,6 @@ paths:
                 items:
                   type: object
                   properties:
-                    id:
-                      type: string
-                      format: uint64
                     chainId:
                       type: string
                     connectionId:
@@ -35060,7 +35057,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /healthcheck/healthcheck/chain/{id}:
+  /healthcheck/healthcheck/chain/{chainId}:
     get:
       summary: Queries a list of Chain items.
       operationId: HealthcheckHealthcheckChain
@@ -35073,9 +35070,6 @@ paths:
               Chain:
                 type: object
                 properties:
-                  id:
-                    type: string
-                    format: uint64
                   chainId:
                     type: string
                   connectionId:
@@ -35110,11 +35104,10 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: id
+        - name: chainId
           in: path
           required: true
           type: string
-          format: uint64
       tags:
         - Query
   /healthcheck/healthcheck/params:
@@ -70800,9 +70793,6 @@ definitions:
   healthcheck.healthcheck.Chain:
     type: object
     properties:
-      id:
-        type: string
-        format: uint64
       chainId:
         type: string
       connectionId:
@@ -70844,9 +70834,6 @@ definitions:
         items:
           type: object
           properties:
-            id:
-              type: string
-              format: uint64
             chainId:
               type: string
             connectionId:
@@ -70894,9 +70881,6 @@ definitions:
       Chain:
         type: object
         properties:
-          id:
-            type: string
-            format: uint64
           chainId:
             type: string
           connectionId:

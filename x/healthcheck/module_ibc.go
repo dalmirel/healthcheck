@@ -126,19 +126,17 @@ func (im IBCModule) OnChanOpenConfirm(
 	portID,
 	channelID string,
 ) error {
-	// TODO Mirel:
-	//monitoredChainID, err := im.keeper.GetCounterpartyChainIDFromChannel(ctx, portID, channelID)
-	//if err != nil {
-	//	return err
-	//}
+	monitoredChainID, err := im.keeper.GetCounterpartyChainIDFromChannel(ctx, portID, channelID)
+	if err != nil {
+		return err
+	}
 
-	//monitoredChain, found := im.keeper.GetChain(ctx, monitoredChainID)
-	//if !found {
-	//	return sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
-	//}
+	monitoredChain, found := im.keeper.GetChain(ctx, monitoredChainID)
+	if !found {
+		return sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
+	}
 
-	//monitoredChain.ChannelId = channelID
-	//im.keeper.SetChain(ctx, monitoredChain)
+	im.keeper.SetChain(ctx, monitoredChain)
 
 	return nil
 }
