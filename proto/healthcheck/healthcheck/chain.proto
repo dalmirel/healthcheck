@@ -7,11 +7,14 @@ message Chain {
   string chainId = 1; 
   string connectionId = 2; 
   MonitoredChainStatus status = 3; 
+  uint64 updateInterval = 4;
+  uint64 timeoutInterval = 5;
   
 }
 
 message MonitoredChainStatus {  
   uint64 status = 1; 
-  uint64 timestamp = 2; 
+  uint64 timestamp = 2;
   uint64 block = 3; 
+  uint64 healthCheckBlockHeight = 4;
 }

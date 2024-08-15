@@ -34946,6 +34946,7 @@ paths:
                       properties:
                         status:
                           type: string
+                          format: uint64
                         timestamp:
                           type: string
                           format: uint64
@@ -35079,6 +35080,7 @@ paths:
                     properties:
                       status:
                         type: string
+                        format: uint64
                       timestamp:
                         type: string
                         format: uint64
@@ -70802,6 +70804,7 @@ definitions:
         properties:
           status:
             type: string
+            format: uint64
           timestamp:
             type: string
             format: uint64
@@ -70813,6 +70816,7 @@ definitions:
     properties:
       status:
         type: string
+        format: uint64
       timestamp:
         type: string
         format: uint64
@@ -70843,6 +70847,7 @@ definitions:
               properties:
                 status:
                   type: string
+                  format: uint64
                 timestamp:
                   type: string
                   format: uint64
@@ -70890,6 +70895,7 @@ definitions:
             properties:
               status:
                 type: string
+                format: uint64
               timestamp:
                 type: string
                 format: uint64

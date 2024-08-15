@@ -167,7 +167,7 @@ func UpdateMonitoredChainsStatus(ctx sdk.Context, keeper keeper.Keeper) {
 	keeper.IterateMonitoredChains(ctx, func(monitoredChain types.Chain) (stop bool) {
 		// monitored chain should be marked as inactive
 		// if heart beat was not received after update interval has exceeded
-		inactivationHeight := monitoredChain.Status.Block + monitoredChain.UpdateInterval
+		inactivationHeight := monitoredChain.Status.Block + monitoredChain.
 		if monitoredChain.Status == uint64(types.Active) &&
 			monitoredChain.ChannelId != "" &&
 			uint64(currentHeight) > inactivationHeight {
@@ -195,5 +195,4 @@ func UpdateMonitoredChainsStatus(ctx sdk.Context, keeper keeper.Keeper) {
 
 		return false
 	})
-}
-*/
+} */
