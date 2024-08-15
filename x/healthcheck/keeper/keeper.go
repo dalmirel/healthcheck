@@ -165,3 +165,19 @@ func (k Keeper) GetCounterpartyChainIDFromChannel(ctx sdk.Context, portID, chann
 
 	return tendermintClient.ChainId, nil
 }
+
+func (k Keeper) IterateMonitoredChains(ctx sdk.Context, fn func(chain types.Chain) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, []byte(types.ChainKeyPrefix))
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		monitoredChain := types.Chain{}
+		k.cdc.MustUnmarshal(iterator.Value(), &monitoredChain)
+
+		stop := fn(monitoredChain)
+		if stop {
+			break
+		}
+	}
+}

@@ -21,6 +21,7 @@ const (
 	// PortID is the default port id that module binds to
 	// PortID = "healthcheck"
 
+	DefaultUpdateInterval  = 10
 	DefaultTimeoutInterval = 20
 )
 

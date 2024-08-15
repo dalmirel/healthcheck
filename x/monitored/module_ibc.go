@@ -41,7 +41,8 @@ func (im IBCModule) OnChanOpenInit(
 	version string,
 ) (string, error) {
 
-	// TODO Mirel: maybe this is not important?
+	// Type of channel should be ORDERED, since
+	// it is important that the update data arrives in order!
 	if order != channeltypes.ORDERED {
 		return "", sdkerrors.Wrapf(channeltypes.ErrInvalidChannelOrdering, "expected %s channel, got %s ", channeltypes.ORDERED, order)
 	}
@@ -66,6 +67,9 @@ func (im IBCModule) OnChanOpenInit(
 		return "", err
 	}
 
+	// here, we can init handshake with additional data per chain:
+	// updateInterval and timeout Interval
+	// https://github.com/cosmos/ibc/tree/main/spec/app/ics-030-middleware
 	return version, nil
 }
 

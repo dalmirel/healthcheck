@@ -181,7 +181,12 @@ func SendHeartBeat(ctx sdk.Context, keeper keeper.Keeper) {
 		},
 	}
 
-	packetData, err := packet.Marshal()
+	// how should we serialize packet data?
+
+	// https://tutorials.cosmos.network/hands-on-exercise/5-ibc-adv/5-ibc-app-packets.html#sending-packets
+	// example: https://github.com/cosmos/interchain-security/blob/a0e1e2df2a8b88ae525529d247190e21269066e4/x/ccv/types/wire.go#L36-L41
+
+	packetData, err := types.ModuleCdc.MarshalJSON(&packet)
 	if err != nil {
 		keeper.Logger(ctx).Debug("failed to marshal healthcheck update IBC packet")
 		return

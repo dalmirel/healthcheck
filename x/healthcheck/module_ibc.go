@@ -99,8 +99,16 @@ func (im IBCModule) OnChanOpenTry(
 		return "", sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChain.GetChainId())
 	}
 
-	// TODO Mirel? SET CHAIN as being monitored
+	// initialize CHAIN data for monitoring, without channelId data ->
+	// This is set on OnChanOpenConfirm (finalized channel opening)
+	// another option? Set everything on OnChanOpeneConfirm?
 	im.keeper.SetChain(ctx, monitoredChain)
+
+	// here we can read updateInterval and TimeoutInterval
+	// set by the chain initiating the handshake - this should be received
+	// or leave those on DEFAULT VALUES!
+	monitoredChain.UpdateInterval = types.DefaultUpdateInterval
+	monitoredChain.TimeoutInterval = types.DefaultTimeoutInterval
 
 	// return types.Version, nil // where version is healthcheck-1
 	return commonTypes.Version, nil
@@ -136,7 +144,9 @@ func (im IBCModule) OnChanOpenConfirm(
 		return sdkerrors.Wrapf(types.ErrChainNotRegistered, "chain with the chain ID %s isn't registered yet", monitoredChainID)
 	}
 
-	// TODO Mirel? : I think I should probably store channel Id here, since this is the last step of the handshake?
+	// I think I should probably store channel Id here, since this is the last step of the handshake?
+	monitoredChain.ChannelId = channelID
+	// TODO Mirel: do we need registration height for some reason?
 	im.keeper.SetChain(ctx, monitoredChain)
 
 	return nil
@@ -194,6 +204,8 @@ func (im IBCModule) OnRecvPacket(
 	// Dispatch packet
 	switch packet := modulePacketData.Packet.(type) {
 	case *commonTypes.HealthcheckPacketData_HealthCheckUpdate:
+		// check timestamp and block data from healtCheck update received from the monitored chain!
+		// maybe rename this to heart beat?
 		if monitoredChain.Status.Timestamp >= packet.HealthCheckUpdate.Timestamp ||
 			monitoredChain.Status.Block >= packet.HealthCheckUpdate.Block {
 
@@ -204,8 +216,11 @@ func (im IBCModule) OnRecvPacket(
 		// if this is newer heart beat IBC update:
 		monitoredChain.Status.Block = packet.HealthCheckUpdate.Block
 		monitoredChain.Status.Timestamp = packet.HealthCheckUpdate.Timestamp
-		// TODO Mirel: define active/inactive statuses
 
+		// set activity status to "Active"
+		monitoredChain.Status.Activity = uint64(types.Active)
+
+		monitoredChain.Status.HealthCheckBlockHeight = uint64(ctx.BlockHeight())
 		im.keeper.SetChain(ctx, monitoredChain)
 
 	// this line is used by starport scaffolding # ibc/packet/module/recv

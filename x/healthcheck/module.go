@@ -147,31 +147,27 @@ func (AppModule) ConsensusVersion() uint64 { return 1 }
 func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 
 // EndBlock contains the logic that is automatically triggered at the end of each block
-func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 
-	// TODO Mirel:
-	// update activity info for registered and monitered chains
-	// function should check each registered chain for the tiestamp
-	// if the timestamp is older than timeout interval -> set chain to inactive status
-	// if not, leave it in active state
-
-	// if chain is in inactive state, the channel should be closed!
-	// am.keeper.ChanCloseInit()
+	UpdateMonitoredChainsStatus(ctx, am.keeper)
 	return []abci.ValidatorUpdate{}
 }
 
-/*
+// Update activity info for registered and monitered chains.
+// Function iterates through each registered chain and compares last block height (todo: timestamp) when the heart beat was received.
+// If the block height (todo:timestamp) is older than timeout interval -> set chain to inactive status
+// If the chain is in inactive state longer than some timeout interval -> the channel should be closed and the chain should be removed from the registry.
 func UpdateMonitoredChainsStatus(ctx sdk.Context, keeper keeper.Keeper) {
 	currentHeight := ctx.BlockHeight()
 
 	keeper.IterateMonitoredChains(ctx, func(monitoredChain types.Chain) (stop bool) {
 		// monitored chain should be marked as inactive
 		// if heart beat was not received after update interval has exceeded
-		inactivationHeight := monitoredChain.Status.Block + monitoredChain.
-		if monitoredChain.Status == uint64(types.Active) &&
+		inactivationHeight := monitoredChain.Status.HealthCheckBlockHeight + monitoredChain.UpdateInterval
+		if monitoredChain.Status.Activity == uint64(types.Active) &&
 			monitoredChain.ChannelId != "" &&
 			uint64(currentHeight) > inactivationHeight {
-			monitoredChain.Status = uint64(types.Inactive)
+			monitoredChain.Status.Activity = uint64(types.Inactive)
 			keeper.SetChain(ctx, monitoredChain)
 
 			return false
@@ -180,19 +176,22 @@ func UpdateMonitoredChainsStatus(ctx sdk.Context, keeper keeper.Keeper) {
 		// chain should be removed and the chanel should be closed
 		// if the heart beat was not received after timeout interval has passed ->
 		// the chain no longer can update it's state from inactive to active !
-		removalHeight := monitoredChain.RegistryBlockHeight + monitoredChain.UpdateInterval + monitoredChain.TimeoutInterval
-		if monitoredChain.Status.Status == types.Inactive &&
+		removalHeight := monitoredChain.Status.HealthCheckBlockHeight + monitoredChain.UpdateInterval + monitoredChain.TimeoutInterval
+		if monitoredChain.Status.Activity == types.Inactive &&
 			monitoredChain.ChannelId != "" &&
 			uint64(currentHeight) > removalHeight {
+
+			// initiate channel closure
 			err := keeper.ChanCloseInit(ctx, keeper.GetPort(ctx), monitoredChain.ChannelId)
 			if err != nil {
 				keeper.Logger(ctx).Debug("failed to close channel with ID: %s. error: %s", monitoredChain.ChannelId, err.Error())
 			}
 
+			// remove chain from the registry
 			monitoredChain.ChannelId = ""
 			keeper.SetChain(ctx, monitoredChain)
 		}
 
 		return false
 	})
-} */
+}
