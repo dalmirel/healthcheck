@@ -150,11 +150,50 @@ func (am AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
 
 	// TODO Mirel:
-	// update acticity info for registered and monitered chains
+	// update activity info for registered and monitered chains
 	// function should check each registered chain for the tiestamp
 	// if the timestamp is older than timeout interval -> set chain to inactive status
 	// if not, leave it in active state
 
 	// if chain is in inactive state, the channel should be closed!
+	// am.keeper.ChanCloseInit()
 	return []abci.ValidatorUpdate{}
 }
+
+/*
+func UpdateMonitoredChainsStatus(ctx sdk.Context, keeper keeper.Keeper) {
+	currentHeight := ctx.BlockHeight()
+
+	keeper.IterateMonitoredChains(ctx, func(monitoredChain types.Chain) (stop bool) {
+		// monitored chain should be marked as inactive
+		// if heart beat was not received after update interval has exceeded
+		inactivationHeight := monitoredChain.Status.Block + monitoredChain.UpdateInterval
+		if monitoredChain.Status == uint64(types.Active) &&
+			monitoredChain.ChannelId != "" &&
+			uint64(currentHeight) > inactivationHeight {
+			monitoredChain.Status = uint64(types.Inactive)
+			keeper.SetChain(ctx, monitoredChain)
+
+			return false
+		}
+
+		// chain should be removed and the chanel should be closed
+		// if the heart beat was not received after timeout interval has passed ->
+		// the chain no longer can update it's state from inactive to active !
+		removalHeight := monitoredChain.RegistryBlockHeight + monitoredChain.UpdateInterval + monitoredChain.TimeoutInterval
+		if monitoredChain.Status.Status == types.Inactive &&
+			monitoredChain.ChannelId != "" &&
+			uint64(currentHeight) > removalHeight {
+			err := keeper.ChanCloseInit(ctx, keeper.GetPort(ctx), monitoredChain.ChannelId)
+			if err != nil {
+				keeper.Logger(ctx).Debug("failed to close channel with ID: %s. error: %s", monitoredChain.ChannelId, err.Error())
+			}
+
+			monitoredChain.ChannelId = ""
+			keeper.SetChain(ctx, monitoredChain)
+		}
+
+		return false
+	})
+}
+*/

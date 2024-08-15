@@ -11,7 +11,7 @@ message Chain {
 }
 
 message MonitoredChainStatus {  
-  string status = 1; 
+  uint64 status = 1; 
   uint64 timestamp = 2; 
   uint64 block = 3; 
 }

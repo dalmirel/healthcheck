@@ -155,7 +155,7 @@ func (im IBCModule) OnRecvPacket(
 }
 
 // OnAcknowledgementPacket implements the IBCModule interface
-// TODO MIREL? - MONITORED CHAIN SHOULD process info about ack?
+// TODO MIREL? - MONITORED CHAIN SHOULD process info about ack? Emit some event!
 func (im IBCModule) OnAcknowledgementPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,
@@ -171,7 +171,7 @@ func (im IBCModule) OnAcknowledgementPacket(
 }
 
 // OnTimeoutPacket implements the IBCModule interface
-// TODO MIREL? - MONITORED CHAIN SHOULD process info about timeout?
+// TODO MIREL? - MONITORED CHAIN SHOULD process info about timeout? Emit some event!
 func (im IBCModule) OnTimeoutPacket(
 	ctx sdk.Context,
 	modulePacket channeltypes.Packet,

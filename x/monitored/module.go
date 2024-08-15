@@ -164,6 +164,7 @@ func SendHeartBeat(ctx sdk.Context, keeper keeper.Keeper) {
 	}
 
 	// TODO Mirel: think of trade off: update interval in blocks or in time?
+	// ctx.BlockHeader().Time compare to time of last update?
 	lastUpdateHeight := int64(keeper.GetLastHealthcheckUpdateHeight(ctx))
 	currentHeight := ctx.BlockHeight()
 
