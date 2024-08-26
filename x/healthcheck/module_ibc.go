@@ -220,6 +220,9 @@ func (im IBCModule) OnRecvPacket(
 		// set activity status to "Active"
 		monitoredChain.Status.Activity = uint64(types.Active)
 
+		// this is block height of the health check chain
+		// for the last heart beat received by the monitored chain
+		// this block height should be used when determining activity!
 		monitoredChain.Status.HealthCheckBlockHeight = uint64(ctx.BlockHeight())
 		im.keeper.SetChain(ctx, monitoredChain)
 

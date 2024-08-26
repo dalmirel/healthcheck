@@ -34941,10 +34941,12 @@ paths:
                       type: string
                     connectionId:
                       type: string
+                    channelId:
+                      type: string
                     status:
                       type: object
                       properties:
-                        status:
+                        activity:
                           type: string
                           format: uint64
                         timestamp:
@@ -34953,6 +34955,15 @@ paths:
                         block:
                           type: string
                           format: uint64
+                        healthCheckBlockHeight:
+                          type: string
+                          format: uint64
+                    updateInterval:
+                      type: string
+                      format: uint64
+                    timeoutInterval:
+                      type: string
+                      format: uint64
               pagination:
                 type: object
                 properties:
@@ -35075,10 +35086,12 @@ paths:
                     type: string
                   connectionId:
                     type: string
+                  channelId:
+                    type: string
                   status:
                     type: object
                     properties:
-                      status:
+                      activity:
                         type: string
                         format: uint64
                       timestamp:
@@ -35087,6 +35100,15 @@ paths:
                       block:
                         type: string
                         format: uint64
+                      healthCheckBlockHeight:
+                        type: string
+                        format: uint64
+                  updateInterval:
+                    type: string
+                    format: uint64
+                  timeoutInterval:
+                    type: string
+                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -70799,10 +70821,12 @@ definitions:
         type: string
       connectionId:
         type: string
+      channelId:
+        type: string
       status:
         type: object
         properties:
-          status:
+          activity:
             type: string
             format: uint64
           timestamp:
@@ -70811,16 +70835,28 @@ definitions:
           block:
             type: string
             format: uint64
+          healthCheckBlockHeight:
+            type: string
+            format: uint64
+      updateInterval:
+        type: string
+        format: uint64
+      timeoutInterval:
+        type: string
+        format: uint64
   healthcheck.healthcheck.MonitoredChainStatus:
     type: object
     properties:
-      status:
+      activity:
         type: string
         format: uint64
       timestamp:
         type: string
         format: uint64
       block:
+        type: string
+        format: uint64
+      healthCheckBlockHeight:
         type: string
         format: uint64
   healthcheck.healthcheck.MsgAddChainResponse:
@@ -70842,10 +70878,12 @@ definitions:
               type: string
             connectionId:
               type: string
+            channelId:
+              type: string
             status:
               type: object
               properties:
-                status:
+                activity:
                   type: string
                   format: uint64
                 timestamp:
@@ -70854,6 +70892,15 @@ definitions:
                 block:
                   type: string
                   format: uint64
+                healthCheckBlockHeight:
+                  type: string
+                  format: uint64
+            updateInterval:
+              type: string
+              format: uint64
+            timeoutInterval:
+              type: string
+              format: uint64
       pagination:
         type: object
         properties:
@@ -70890,10 +70937,12 @@ definitions:
             type: string
           connectionId:
             type: string
+          channelId:
+            type: string
           status:
             type: object
             properties:
-              status:
+              activity:
                 type: string
                 format: uint64
               timestamp:
@@ -70902,6 +70951,15 @@ definitions:
               block:
                 type: string
                 format: uint64
+              healthCheckBlockHeight:
+                type: string
+                format: uint64
+          updateInterval:
+            type: string
+            format: uint64
+          timeoutInterval:
+            type: string
+            format: uint64
   healthcheck.healthcheck.QueryParamsResponse:
     type: object
     properties:
